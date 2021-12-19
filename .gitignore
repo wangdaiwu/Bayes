@@ -24,6 +24,10 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.idea/
+Bayes/dataset/
+Bayes/test/
+Bayes/tf_idf/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
