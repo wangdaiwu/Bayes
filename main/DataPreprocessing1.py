@@ -36,19 +36,32 @@ if __name__ == "__main__":
     initVocabulary = list(initVocabulary)
     vocabLen = len(initVocabulary)
 
+    fileSrc = open("../dataset/大作业-文本情感分析-训练集.csv", encoding="utf8")
+    linesSrc = fileSrc.readlines()
+    fileDes = open("../dataset/raw_train_set.csv", mode="w", encoding="utf8")
+    fileDes.write(linesSrc[0])
+
     bayesVocabulary = set()
     for index in range(docLen):
+        needWrite = False
         for word in data[index]:
             if word in initVocabulary:
                 # print(word)
+                needWrite = True
                 bayesVocabulary.add(word)
-        # print("")
+        # print(f"{index} {needWrite}")
+        if needWrite:
+            fileDes.write(linesSrc[index + 1])
         if index % 1000 == 0:
             print(f"{index} / {docLen}")
 
+    fileDes.flush()
+    fileSrc.close()
+    fileDes.close()
+
     print(f"len of bayesVocabulary: {len(bayesVocabulary)}")
 
-    file = open("bayesVocabulary.txt", mode="w", encoding="utf8")
+    fileVocab = open("bayesVocabulary.txt", mode="w", encoding="utf8")
     for word in bayesVocabulary:
-        file.write(f"{word}\n")
-    file.flush()
+        fileVocab.write(f"{word}\n")
+    fileVocab.flush()

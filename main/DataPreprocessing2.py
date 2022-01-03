@@ -64,6 +64,8 @@ def buildTestReviewsSeg(path = "../dataset/test_set.csv"):
 if __name__ == "__main__":
     # 分词前要导入词典
     jieba.load_userdict("initVocabulary.txt")
-    # buildLabels()
-    # buildTrainReviewsSeg()
-    buildTestReviewsSeg("../dataset/testshuffle_nolabel.csv")
+    buildLabels()
+    buildTrainReviewsSeg()
+
+    buildTestReviewsSeg()
+    # buildTestReviewsSeg("../dataset/testshuffle_nolabel.csv")

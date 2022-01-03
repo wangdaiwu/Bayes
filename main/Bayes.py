@@ -111,7 +111,7 @@ class Bayes(object):
             print(f"       Start calculating ...")
             TF_IDF = np.multiply(TF[startingIndex:endingIndex], IDF)
             print(f"       Complete the calculation of current batch, dump ../tf_idf/tf_idf{batch + 1}.dat")
-            with open(f"../tf_idf/tf_idf{batch + 1}.dat", mode="wb") as f:
+            with open(f"../model/tf_idf{batch + 1}.dat", mode="wb") as f:
                 pickle.dump(TF_IDF, f)
             # self.TF_IDF = np.multiply(self.TF, self.IDF)
 
@@ -143,7 +143,7 @@ class Bayes(object):
 
             print(f"   batch: {batch + 1} / {self.trainBatch} ---> index range: [{startingIndex}, {endingIndex}]")
             print(f"     load ../tf_idf/tf_idf{batch + 1}.dat")
-            with open(f"../tf_idf/tf_idf{batch + 1}.dat", mode="rb") as f:
+            with open(f"../model/tf_idf{batch + 1}.dat", mode="rb") as f:
                 TF_IDF = pickle.load(f)
 
             print(f"     Start calculating ...")

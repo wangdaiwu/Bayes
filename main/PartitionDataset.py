@@ -13,7 +13,6 @@ ratioOfTestSet : 测试集的占比
 '''
 
 def partitionDataset(nos = 311603, ros = 0.0001):
-    # MAX numberOfSamples 311603
     numberOfSamples = nos
     ratioOfTestSet = ros
     numberOfTrainSet = int(numberOfSamples * (1 - ratioOfTestSet))
@@ -51,4 +50,5 @@ def partitionDataset(nos = 311603, ros = 0.0001):
 
 
 if __name__ == "__main__":
+    # MAX numberOfSamples 311603
     partitionDataset(311603, 0.0001)
