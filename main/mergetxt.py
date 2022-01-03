@@ -6,7 +6,5 @@ if __name__ == "__main__":
     for filename in filenames:
         print(filename)
         lines = open("../dictionary/{filename}".format(filename=filename), encoding="utf8").readlines()
-        # separator = "********{filename}********\n".format(filename=filename)
-        # file.write(separator)
         file.writelines(lines)
         file.flush()

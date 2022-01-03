@@ -23,11 +23,11 @@ def loadData():
     vocabulary = np.loadtxt(open("bayesVocabulary.txt", encoding="utf8"), dtype="str")
     vocabulary = list(vocabulary)
 
-    print(len(trainLabels))
-    print(len(trainReviews))
-    print(len(testLabels))
-    print(len(testReviews))
-    print(len(vocabulary))
+    print(f"trainLabels len: {len(trainLabels)}")
+    print(f"trainReviews len: {len(trainReviews)}")
+    print(f"testLabels len: {len(testLabels)}")
+    print(f"testReviews len: {len(testReviews)}")
+    print(f"vocabulary len: {len(vocabulary)}")
 
     return trainLabels, trainReviews, testLabels, testReviews, vocabulary
 
@@ -58,6 +58,11 @@ class Bayes(object):
         print("(1)[Begin-function] calcPrioProb")
         for label in set(self.trainLabels):
             self.prioProb[label] = self.trainLabels.count(label) / len(self.trainLabels)
+
+        print(f"   dump ../model/prioProb.dat")
+        with open(f"../model/prioProb.dat", mode="wb") as f:
+            pickle.dump(self.prioProb, f)
+
         print("(1)[End-function] calcPrioProb")
 
     # tf_idf
@@ -143,8 +148,9 @@ class Bayes(object):
 
             print(f"     Start calculating ...")
             for index in range(startingIndex, endingIndex):
-                self.condProb[int(self.trainLabels[index])] += TF_IDF[int(index - startingIndex)]
-                sumList[int(self.trainLabels[index])] += np.sum(int(self.trainLabels[index]))
+                label = int(self.trainLabels[index])
+                self.condProb[label] += TF_IDF[int(index - startingIndex)]
+                sumList[label] += np.sum(self.condProb[label])
             print(f"     Complete the calculation of current batch")
 
             # 设置下一批的 startingIndex
@@ -153,10 +159,15 @@ class Bayes(object):
         with np.errstate(divide='ignore', invalid='ignore'):
             self.condProb = self.condProb / sumList
             self.condProb[~np.isfinite(self.condProb)] = 0
+
+        print(f"   dump ../model/condProb.dat")
+        with open(f"../model/condProb.dat", mode="wb") as f:
+            pickle.dump(self.condProb, f)
+
         print("(3)[End-function] calcCondProb")
 
-    # train
-    def train(self, labels, reviews, vocabulary):
+    # init
+    def init(self, labels, reviews, vocabulary):
         self.trainLabels = labels
         self.trainReviews = reviews
         self.trainDocLen = len(reviews)
@@ -164,6 +175,8 @@ class Bayes(object):
         self.vocabulary = vocabulary
         self.vocabLen = len(vocabulary)
 
+    # train
+    def train(self):
         bayes.calcPrioProb()
         bayes.calcTF_IDF()
         bayes.calcCondProb()
@@ -179,6 +192,15 @@ class Bayes(object):
         self.testReviews = testReviews
         self.testDocLen = len(testReviews)
         self.transform()
+
+        print(f"   load ../model/prioProb.dat")
+        with open(f"../model/prioProb.dat", mode="rb") as f:
+            self.prioProb = pickle.load(f)
+
+        print(f"   load ../model/condProb.dat")
+        with open(f"../model/condProb.dat", mode="rb") as f:
+            self.condProb = pickle.load(f)
+
         predictResultList = []
         for index in range(self.testDocLen):
             postProb = 0
@@ -195,9 +217,6 @@ class Bayes(object):
 if __name__ == '__main__':
     bayes = Bayes()
     trainLabels, trainReviews, testLabels, testReviews, vocabulary = loadData()
-    bayes.train(trainLabels, trainReviews, vocabulary)
-    # s = []
-    # s.append("看着真挺让人难过的。我100岁了。图为谭孝珍老人背着沉重的废纸壳走在贵阳市文会巷。")
-    # s = seg(s)
-    # print(s[0])
+    bayes.init(trainLabels, trainReviews, vocabulary)
+    bayes.train()
     print(bayes.predict(testReviews))
