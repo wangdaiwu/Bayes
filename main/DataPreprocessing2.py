@@ -23,17 +23,19 @@ def seg(reviews):
     return reviewsSeg
 
 
-def buildLabels():
+def buildTrainLabels():
     trainLabels = pd.read_csv("../dataset/train_set.csv", usecols=["label"], low_memory=False)
     trainLabels = np.array(trainLabels).reshape(-1)
     trainLabels = list(trainLabels)
 
+    with open("../dataset/train_label.dat", mode="wb") as f:
+        pickle.dump(trainLabels, f)
+
+
+def buildTestLabels():
     testLabels = pd.read_csv("../dataset/test_set.csv", usecols=["label"], low_memory=False)
     testLabels = np.array(testLabels).reshape(-1)
     testLabels = list(testLabels)
-
-    with open("../dataset/train_label.dat", mode="wb") as f:
-        pickle.dump(trainLabels, f)
 
     with open("../dataset/test_label.dat", mode="wb") as f:
         pickle.dump(testLabels, f)
@@ -50,7 +52,7 @@ def buildTrainReviewsSeg():
         pickle.dump(trainReviews, f)
 
 
-def buildTestReviewsSeg(path = "../dataset/test_set.csv"):
+def buildTestReviewsSeg(path="../dataset/test_set.csv"):
     testReviews = pd.read_csv(path, usecols=["review"], low_memory=False)
     testReviews = np.array(testReviews).reshape(-1)
     testReviews = list(testReviews)
@@ -64,8 +66,9 @@ def buildTestReviewsSeg(path = "../dataset/test_set.csv"):
 if __name__ == "__main__":
     # 分词前要导入词典
     jieba.load_userdict("initVocabulary.txt")
-    buildLabels()
-    buildTrainReviewsSeg()
+    # buildTrainLabels()
+    # buildTestLabels()
+    # buildTrainReviewsSeg()
+    # buildTestReviewsSeg()
 
-    buildTestReviewsSeg()
-    # buildTestReviewsSeg("../dataset/testshuffle_nolabel.csv")
+    buildTestReviewsSeg("../dataset/testshuffle_nolabel.csv")

@@ -41,6 +41,7 @@ if __name__ == "__main__":
     fileDes = open("../dataset/raw_train_set.csv", mode="w", encoding="utf8")
     fileDes.write(linesSrc[0])
 
+    linesDesCount = 0
     bayesVocabulary = set()
     for index in range(docLen):
         needWrite = False
@@ -51,6 +52,7 @@ if __name__ == "__main__":
                 bayesVocabulary.add(word)
         # print(f"{index} {needWrite}")
         if needWrite:
+            linesDesCount += 1
             fileDes.write(linesSrc[index + 1])
         if index % 1000 == 0:
             print(f"{index} / {docLen}")
@@ -60,6 +62,7 @@ if __name__ == "__main__":
     fileDes.close()
 
     print(f"len of bayesVocabulary: {len(bayesVocabulary)}")
+    print(f"len of fileDes{linesDesCount}")
 
     fileVocab = open("bayesVocabulary.txt", mode="w", encoding="utf8")
     for word in bayesVocabulary:

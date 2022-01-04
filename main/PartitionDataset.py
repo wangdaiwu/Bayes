@@ -12,7 +12,8 @@ numberOfSamples : 总的样本数
 ratioOfTestSet : 测试集的占比
 '''
 
-def partitionDataset(nos = 311603, ros = 0.0001):
+
+def partitionDataset(nos=250825, ros=0.0001):
     numberOfSamples = nos
     ratioOfTestSet = ros
     numberOfTrainSet = int(numberOfSamples * (1 - ratioOfTestSet))
@@ -21,9 +22,9 @@ def partitionDataset(nos = 311603, ros = 0.0001):
     print(f"numberOfTrainSet: {numberOfTrainSet}")
     print(f"numberOfTestSet: {int(numberOfSamples * ratioOfTestSet)}")
 
-    # '大作业-文本情感分析-训练集.csv' 包括标题共有 311604 行
-    randomList = random.sample(range(1, 311604), numberOfSamples)
-    fileSrc = open("../dataset/大作业-文本情感分析-训练集.csv", encoding="utf8")
+    # 'raw_train_set' 包括标题共有 250826 行
+    randomList = random.sample(range(1, 250826), numberOfSamples)
+    fileSrc = open("../dataset/raw_train_set.csv", encoding="utf8")
     linesSrc = fileSrc.readlines()
     fileTrain = open("../dataset/train_set.csv", mode="w", encoding="utf8")
     fileTest = open("../dataset/test_set.csv", mode="w", encoding="utf8")
@@ -50,5 +51,5 @@ def partitionDataset(nos = 311603, ros = 0.0001):
 
 
 if __name__ == "__main__":
-    # MAX numberOfSamples 311603
-    partitionDataset(311603, 0.0001)
+    # MAX numberOfSamples 250825
+    partitionDataset(250825, 0.0001)

@@ -55,7 +55,7 @@ class Bayes(object):
 
     # P(yi)
     def calcPrioProb(self):
-        print("(1)[Begin-function] calcPrioProb")
+        print("(1)[begin-function] calcPrioProb")
         for label in set(self.trainLabels):
             self.prioProb[label] = self.trainLabels.count(label) / len(self.trainLabels)
 
@@ -63,15 +63,15 @@ class Bayes(object):
         with open(f"../model/prioProb.dat", mode="wb") as f:
             pickle.dump(self.prioProb, f)
 
-        print("(1)[End-function] calcPrioProb")
+        print("(1)[end-function] calcPrioProb")
 
     # tf_idf
     def calcTF_IDF(self):
-        print("(2)[Begin-function] calcTF_IDF")
+        print("(2)[begin-function] calcTF_IDF")
         TF = np.zeros([self.trainDocLen, self.vocabLen], dtype="float16")
         IDF = np.zeros([1, self.vocabLen])
 
-        print("(2.1)[Begin-calculation] TF and IDF")
+        print("(2.1)[begin-calculation] TF and IDF")
         for index in range(self.trainDocLen):
             trainReviewBow = 0
             for word in self.trainReviews[index]:
@@ -89,9 +89,9 @@ class Bayes(object):
                 print(f"     progress: {index} / {self.trainDocLen}")
 
         IDF = np.log(self.trainDocLen / (IDF + 1))
-        print("(2.1)[End-calculation] TF and IDF")
+        print("(2.1)[end-calculation] TF and IDF")
 
-        print("(2.2)[Begin-calculation] TF_IDF")
+        print("(2.2)[begin-calculation] TF_IDF")
         numOfRemainingData = self.trainDocLen
         startingIndex = 0
         endingIndex = 0
@@ -118,11 +118,11 @@ class Bayes(object):
             # 设置下一批的 startingIndex
             startingIndex = endingIndex
 
-        print("(2.2)[End-calculation] TF_IDF")
-        print("(2)[End-function] calcTF_IDF")
+        print("(2.2)[end-calculation] TF_IDF")
+        print("(2)[end-function] calcTF_IDF")
 
     def calcCondProb(self):
-        print("(3)[Begin-function] calcCondProb")
+        print("(3)[begin-function] calcCondProb")
         self.condProb = np.zeros([len(self.prioProb), self.vocabLen])
         sumList = np.zeros([len(self.prioProb), 1])
 
@@ -164,7 +164,7 @@ class Bayes(object):
         with open(f"../model/condProb.dat", mode="wb") as f:
             pickle.dump(self.condProb, f)
 
-        print("(3)[End-function] calcCondProb")
+        print("(3)[end-function] calcCondProb")
 
     # init
     def init(self, labels, reviews, vocabulary):
@@ -189,6 +189,7 @@ class Bayes(object):
                     self.testReviewsBOW[index, self.vocabulary.index(word)] += 1
 
     def predict(self, testReviews):
+        print("(4)[begin-function] predict")
         self.testReviews = testReviews
         self.testDocLen = len(testReviews)
         self.transform()
@@ -204,13 +205,25 @@ class Bayes(object):
         predictResultList = []
         for index in range(self.testDocLen):
             postProb = 0
+            '''
+            predictResult 应该如下设置初始值为None
             predictResult = None
+            实际存在很小一部分无法分类的样本，导致样本预测结果为None
+            由于结果中0标签概率较大，故将 predictResult 初始值设置为0
+            '''
+            predictResult = 0
             for cond_prob_label, label in zip(self.condProb, self.prioProb):
                 post_Prob_label = np.sum(self.testReviewsBOW[index] * cond_prob_label * self.prioProb[label])
                 if post_Prob_label > postProb:
                     postProb = post_Prob_label
-                    predictResult = label
+                    predictResult = int(label)
             predictResultList.append(predictResult)
+
+        print(f"   dump ../model/result.csv")
+        predictResultDF = pd.DataFrame(data=predictResultList)
+        predictResultDF.to_csv("../model/result.csv", encoding="utf8", index=False, header=None)
+
+        print("(4)[end-function] predict")
         return predictResultList
 
 
@@ -218,5 +231,5 @@ if __name__ == '__main__':
     bayes = Bayes()
     trainLabels, trainReviews, testLabels, testReviews, vocabulary = loadData()
     bayes.init(trainLabels, trainReviews, vocabulary)
-    bayes.train()
+    # bayes.train()
     print(bayes.predict(testReviews))
