@@ -69,6 +69,6 @@ if __name__ == "__main__":
     # buildTrainLabels()
     # buildTestLabels()
     # buildTrainReviewsSeg()
-    # buildTestReviewsSeg()
+    buildTestReviewsSeg()
 
-    buildTestReviewsSeg("../dataset/testshuffle_nolabel.csv")
+    # buildTestReviewsSeg("../dataset/testshuffle_nolabel.csv")

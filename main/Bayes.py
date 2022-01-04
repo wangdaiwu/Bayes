@@ -198,6 +198,7 @@ class Bayes(object):
         with open(f"../model/prioProb.dat", mode="rb") as f:
             self.prioProb = pickle.load(f)
 
+
         print(f"   load ../model/condProb.dat")
         with open(f"../model/condProb.dat", mode="rb") as f:
             self.condProb = pickle.load(f)
@@ -205,12 +206,6 @@ class Bayes(object):
         predictResultList = []
         for index in range(self.testDocLen):
             postProb = 0
-            '''
-            predictResult 应该如下设置初始值为None
-            predictResult = None
-            实际存在很小一部分无法分类的样本，导致样本预测结果为None
-            由于结果中0标签概率较大，故将 predictResult 初始值设置为0
-            '''
             predictResult = 0
             for cond_prob_label, label in zip(self.condProb, self.prioProb):
                 post_Prob_label = np.sum(self.testReviewsBOW[index] * cond_prob_label * self.prioProb[label])
